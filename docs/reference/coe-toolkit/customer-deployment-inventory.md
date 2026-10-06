@@ -24,10 +24,10 @@ This is the **WP0 record** that replaces every "(validate)" assumption with a **
 
 | Item | Expected | Confirmed value | Status |
 | --- | --- | --- | --- |
-| Core Components solution | `CenterofExcellenceCoreComponents` | `<record>` | `[ ]` |
-| Audit Components solution | `CenterOfExcellenceAuditComponents` | `<record>` | `[ ]` |
-| Core Components version | — | `<record>` | `[ ]` |
-| Audit Components version | — | `<record>` | `[ ]` |
+| Core Components solution | `CenterofExcellenceCoreComponents` | `CenterofExcellenceCoreComponents` (managed) | `[x]` |
+| Audit Components solution | `CenterOfExcellenceAuditComponents` | `CenterofExcellenceAuditComponents` — friendly name "Center of Excellence - Governance Components" (managed) | `[x]` |
+| Core Components version | — | `4.50.9` | `[x]` |
+| Audit Components version | — | `3.27.7` | `[x]` |
 | Inventory mode | Cloud-flow inventory vs. Data Export | `<record>` | `[ ]` |
 | Publisher prefix | `admin_` (validate) | `<record>` | `[ ]` |
 
