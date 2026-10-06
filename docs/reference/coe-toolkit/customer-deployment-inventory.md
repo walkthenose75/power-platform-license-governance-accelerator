@@ -87,7 +87,7 @@ Replace expected names with confirmed logical names/columns. Mark PII.
 
 | Item | Value | Status |
 | --- | --- | --- |
-| Dev environment | `<name/region>` | `[ ]` |
+| Dev environment | `Contoso - Dev` (target; build deferred) | `[ ]` |
 | Project solution + publisher | `<name/prefix>` | `[ ]` |
 | Environment variables / connection references | `<list>` | `[ ]` |
 | Four Dataverse roles + FLS | Executive/Analyst/Administrator/Auditor | `[ ]` |
