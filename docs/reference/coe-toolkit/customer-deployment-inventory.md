@@ -37,32 +37,32 @@ Replace expected names with confirmed logical names/columns. Mark PII.
 
 | Capability | Expected table | Confirmed logical name | Key columns confirmed | Status |
 | --- | --- | --- | --- | --- |
-| Environment | `admin_environment` | `<record>` | id, type, region | `[ ]` |
-| Power Apps App | `admin_app` | `<record>` | id, owner, environment, type, last launched | `[ ]` |
-| Flow | `admin_flow` | `<record>` | id, owner, environment, state | `[ ]` |
-| Maker | `admin_makeruser` | `<record>` | **Entra object ID**, UPN (PII) | `[ ]` |
-| Connector | `admin_connector` | `<record>` | id, tier/premium | `[ ]` |
-| Connection Reference | `admin_connectionreference` | `<record>` | connector, owner, environment | `[ ]` |
+| Environment | `admin_environment` | `admin_environment` ✓ | confirmed | `[x]` |
+| Power Apps App | `admin_app` | `admin_app` ✓ (`admin_applastlaunchedon`, `admin_launchesinthepast30days`, `admin_usespremiumapi`, `admin_appowner`) | confirmed | `[x]` |
+| Flow | `admin_flow` | `admin_flow` ✓ (+ `admin_flowactiondetail`) | confirmed | `[x]` |
+| Maker | `admin_makeruser` | `admin_maker` ✓ (also `admin_powerplatformuser`); UPN `admin_userprincipalname`, email `admin_useremail` | confirmed | `[x]` |
+| Connector | `admin_connector` | `admin_connector` ✓ | confirmed | `[x]` |
+| Connection Reference | `admin_connectionreference` | `admin_connectionreference` ✓ (+ `admin_connectionreferenceidentity`) | confirmed | `[x]` |
 
 ## 3. Confirmed Audit Tables and Usage Signals
 
 | Signal | Expected source | Confirmed | Status |
 | --- | --- | --- | --- |
-| App launch events | Audit log table | `<record>` | `[ ]` |
-| Unique users | Aggregate on app | `<record>` | `[ ]` |
-| Last launched / last run | App/Flow columns | `<record>` | `[ ]` |
-| Flow usage | Flow usage data | `<record>` | `[ ]` |
+| App launch events | Audit log table | `admin_auditlog` — **per-user** (`admin_userid`, `admin_userupn`), per-app (`admin_appid`, `admin_appname`), premium flag (`admin_appispremium`), timestamp (`admin_creationtime`) ✓ | `[x]` |
+| Unique users | Aggregate on app | `admin_app.admin_appsharedusers`; per-user derivable from `admin_auditlog` | `[x]` |
+| Last launched / last run | App/Flow columns | `admin_app.admin_applastlaunchedon`, `admin_launchesinthepast30days` ✓ | `[x]` |
+| Flow usage | Flow usage data | `admin_flow` (+ `admin_flowactiondetail`); per-user flow usage weaker than apps (validate when populated) | `[~]` |
 
 ## 4. Blocking Gap Resolution
 
 | Gap | Question | Resolution recorded | Status |
 | --- | --- | --- | --- |
-| **G1 per-user usage granularity** | Does CoE Audit retain per-user launch detail? | `<Reuse / Supplement + detail>` | `[ ]` |
-| **G2 usage-history window** | What is the retention/window length? | `<N days>` | `[ ]` |
-| G3 flow usage completeness | Is flow usage captured per user? | `<record>` | `[ ]` |
-| Maker Entra object ID populated | Is the correlation anchor present? | `<yes/no + coverage>` | `[ ]` |
-| Business-criticality classification | Is CoE criticality populated? (Q-COE-3) | `<reuse / project-owned>` | `[ ]` |
-| Last successful inventory/audit sync | Fresh? Any failed flows? | `<record>` | `[ ]` |
+| **G1 per-user usage granularity** | Does CoE Audit retain per-user launch detail? | **Resolved (schema): `admin_auditlog` retains per-user, per-app, premium-flagged, timestamped launches → Reuse As-Is.** | `[x]` |
+| **G2 usage-history window** | What is the retention/window length? | Pending data — `admin_auditlog` currently **empty (0 rows)** in Contoso - Dev; window TBD until CoE Audit sync populates. | `[!]` |
+| G3 flow usage completeness | Is flow usage captured per user? | Flow usage weaker than app launches; revisit when populated. | `[~]` |
+| Maker Entra object ID populated | Is the correlation anchor present? | No dedicated AAD object-id column; **correlate via UPN** (`admin_userprincipalname` / auditlog `admin_userupn` ↔ Graph `userPrincipalName`). `admin_makerid` is the Dataverse PK. | `[x]` |
+| Business-criticality classification | Is CoE criticality populated? (Q-COE-3) | TBD — check when inventory populated. | `[ ]` |
+| Last successful inventory/audit sync | Fresh? Any failed flows? | **CoE inventory empty** (0 apps/flows/environments, 1 maker, 0 auditlogs) — sync not yet populated in Contoso - Dev. | `[!]` |
 
 ## 5. Microsoft Graph and Consent
 
