@@ -77,6 +77,11 @@ The data substrate is reused/extended from CoE; net-new build is confined to the
 - [Data model](docs/data-model.md)
 - [Capability map (reuse vs. build)](docs/capability-map.md)
 
+### Design specifications (implementation-ready)
+- [Interface and API specification](docs/interface-api-specification.md)
+- [Security and identity design](docs/security-identity-design.md)
+- [Recommendation rules specification](docs/recommendation-rules-specification.md)
+
 ### CoE reuse and assessment
 - [CoE reuse analysis](docs/coe-reuse-analysis.md)
 - [Core + Audit components assessment](docs/core-and-audit-components-assessment.md)
