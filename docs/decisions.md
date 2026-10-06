@@ -87,3 +87,23 @@ Architecture and backlog items must record interface validation evidence. Undocu
 Status:
 
 Accepted
+
+---
+
+## ADR-005
+
+Decision:
+
+Customer-facing authentication must minimize credential creation. The handoff unmanaged solution should use **delegated, connection-reference-based authentication** — the Dataverse connector for CoE reads, and a delegated Microsoft Entra-protected connection for Graph licensing read and reclamation — so the importing administrator signs in rather than creating an app registration. Service principals / application permissions are **optional** (for unattended or pipeline scenarios) and are used for the project's own build, not required of the customer.
+
+Rationale:
+
+The deliverable is an unmanaged solution a customer imports; requiring them to create Entra app registrations and grant application consent adds friction and may be blocked by their permissions or policies.
+
+Impact:
+
+Primary customer authentication is delegated connections. The delegated Graph license-read (and reclamation) path's feasibility depends on the signed-in administrator's directory role and must be validated (ADR-004). Application-permission guidance remains documented as an optional alternative. The project's own build in a development environment may use a disposable service principal.
+
+Status:
+
+Accepted

@@ -42,6 +42,14 @@ Three distinct identities enforce least privilege and execution separation:
 - **Read and write are different identities.** WP0/WP1 provision only the two read identities; the reclamation identity's write scope is **not consented** until WP3 and security sign-off.
 - The project-environment application user that **writes project-owned tables** holds a least-privilege role scoped to the project solution only (no CoE write).
 
+### Customer runtime authentication (low friction — primary for the handoff)
+
+The unmanaged solution is designed so the **importing administrator does not need to create an app registration** (ADR-005):
+
+- **CoE reads** use the **Dataverse connector** (a connection the admin signs into) — no app registration.
+- **Graph licensing read and reclamation** use a **delegated, Microsoft Entra-protected connection** (a connection reference the admin signs into) rather than application permissions. Feasibility of the delegated license read depends on the admin's directory role and is validated during build (ADR-004).
+- **Application permissions / service principals are optional** — for unattended or pipeline scenarios, or where delegated access is insufficient. The `SPN-*` identities below describe that optional path and the project's own build identity; they are **not required** of the customer.
+
 ## Authentication and Secrets
 
 - **Certificate-preferred** credentials for service principals (over client secrets); if secrets are used, short rotation.
