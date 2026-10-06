@@ -30,13 +30,78 @@ Only supported Microsoft interfaces may be considered. Availability, permissions
 
 The accelerator does not introduce business approval workflows. Any remediation capability must use explicit administrator initiation, safety checks, dry-run evidence, and an audit trail.
 
+## Deployment Assumptions
+
+- CoE **Core Components** and **Audit Components** (CenterOfExcellenceAuditComponents, including Audit Logs) are installed.
+- **CoE is the system of record** for apps, flows, makers, environments, usage, and ownership.
+- **Microsoft Graph** provides licensing entitlement data (premium assignment, SKU, direct vs. group).
+- **No approval workflows**; **safe remediation only** (administrator-initiated, dry-run, dependency-checked, audited).
+- **Custom solution components remain separate** from CoE (no managed-layer modifications).
+
+## Reuse vs. Build
+
+| Layer | Posture |
+| --- | --- |
+| CoE Core (inventory, ownership, environment, maker, connector) | **Reuse** (read-only) |
+| CoE Audit (usage, last-launched, inactivity) | **Reuse** (read-only) |
+| CoE Power BI governance dashboards | **Reuse / Extend** |
+| Microsoft Graph licensing | **Supplement** |
+| Correlation, analytics, dependency, visibility | **Extend** |
+| Acquisition, recommendation, reclamation, audit, protected identities | **Build New** |
+
+The data substrate is reused/extended from CoE; net-new build is confined to the licensing layer CoE does not provide. See [capability-map.md](docs/capability-map.md) for the full proof.
+
 ## Documentation
 
+### Foundation and governance
 - [Project charter](docs/project-charter.md)
 - [Vision](docs/vision.md)
-- [Architecture](docs/architecture.md)
 - [Requirements](docs/requirements.md)
-- [Backlog](docs/backlog.md)
 - [Guardrails](docs/guardrails.md)
-- [Architecture decisions](docs/decisions.md)
+- [Architecture decisions (ADRs)](docs/decisions.md)
 - [Charter compliance review](docs/charter-compliance-review.md)
+
+### Product and UX
+- [Product definition](docs/product-definition.md)
+- [Personas](docs/personas.md)
+- [User journeys](docs/user-journeys.md)
+- [MVP definition](docs/mvp-definition.md)
+- [Open questions](docs/open-questions.md)
+- [Backlog](docs/backlog.md)
+
+### Architecture and design
+- [Architecture](docs/architecture.md)
+- [Solution architecture](docs/solution-architecture.md)
+- [App navigation (model-driven UX)](docs/app-navigation.md)
+- [Dashboard design](docs/dashboard-design.md)
+- [Data model](docs/data-model.md)
+- [Capability map (reuse vs. build)](docs/capability-map.md)
+
+### CoE reuse and assessment
+- [CoE reuse analysis](docs/coe-reuse-analysis.md)
+- [Core + Audit components assessment](docs/core-and-audit-components-assessment.md)
+- [Audit components gap analysis](docs/audit-components-gap-analysis.md)
+- [CoE Starter Kit reference](docs/reference/coe-toolkit/README.md)
+
+### Delivery
+- [Build plan](docs/build-plan.md)
+
+## Repository Structure
+
+```
+.
+├── docs/                     Architecture, product, UX, analytics, and CoE assessment docs
+│   ├── prompts/              Architecture-review prompts (no implementation)
+│   └── reference/coe-toolkit CoE Starter Kit reference material
+├── solution/                 Project-owned solution scaffold (kept separate from CoE)
+│   ├── LicenseGovernanceCore
+│   ├── LicenseGovernanceAutomation
+│   ├── LicenseGovernanceApp
+│   └── LicenseGovernanceCoEAdapter
+├── test/                     Test assets (planned)
+└── .github/                  Repository-level agent instructions
+```
+
+## Status
+
+Design and architecture phase. The documentation set is internally consistent and charter-aligned. An implementation-ready delivery plan is in [build-plan.md](docs/build-plan.md). No Power Platform assets have been generated yet.
