@@ -88,8 +88,12 @@ The data substrate is reused/extended from CoE; net-new build is confined to the
 - [Audit components gap analysis](docs/audit-components-gap-analysis.md)
 - [CoE Starter Kit reference](docs/reference/coe-toolkit/README.md)
 
-### Delivery
+### Delivery and handoff
 - [Build plan](docs/build-plan.md)
+- [Administrator / setup and operations guide](docs/administrator-operations-guide.md)
+- [Validation and safety test checklist](docs/validation-safety-test-checklist.md)
+- [Data handling and privacy note](docs/data-handling-privacy-note.md)
+- [Customer deployment inventory (template)](docs/reference/coe-toolkit/customer-deployment-inventory.md)
 
 ## Repository Structure
 

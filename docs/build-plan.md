@@ -23,6 +23,7 @@ Assumptions (fixed for this plan):
 - **Microsoft Graph** provides licensing entitlement data (premium assignment, SKU, direct vs. group).
 - **No approval workflows**; **safe remediation only** (administrator-initiated, dry-run, dependency-checked, audited).
 - **Custom solution components remain separate** from CoE (no managed-layer modification).
+- **Deliverable = an unmanaged solution** the customer imports, owns, and may modify. The customer operates it and is the **data controller**; this plan does not include us running their ALM or production operations.
 
 Capability IDs (C0–C8) reference `docs/product-definition.md`; table names reference `docs/data-model.md`; classifications reference `docs/capability-map.md`.
 
@@ -30,20 +31,20 @@ Capability IDs (C0–C8) reference `docs/product-definition.md`; table names ref
 
 ## Repository Evaluation — Critical Missing Design Documents
 
-The current repository is strong on vision, product, UX, analytics, data model, and CoE reuse/assessment. Before or during implementation, the following **critical design artifacts are missing** and must be authored. This plan sequences them; it does **not** create them here.
+The repository now includes the critical design specifications. Because the deliverable is an **unmanaged solution handed to the customer** (they import, own, and may modify it), the remaining artifacts are reframed for **handoff and self-serve operation** rather than for operating a managed deployment.
 
-| Document | Why it is critical | Needed before | Priority |
-| --- | --- | --- | --- |
-| **Interface & API Specification** — exact Microsoft Graph operations for licensing read and the reclamation operation, plus CoE adapter query contracts; permissions, throttling, paging, retries (ADR-004 evidence) | Implementation cannot safely begin without validated, supported operations and permissions | WP0 / WP1 | **Critical** |
-| **Security & Identity Design** — app registration, least-privilege Graph scopes and admin consent, Dataverse security roles, field-level security, secret/connection-reference handling, execution separation | Governs both acquisition and reclamation safety; blocks any Graph or reclamation work | WP0 / WP1 | **Critical** |
-| **Recommendation Rules Specification** — Safe/Review/Blocked logic, inactivity definition and thresholds, evidence weighting, exception precedence | Core intellectual property behind C5; resolves Q-ANALYTICS-1; drives explainability | WP2 | **Critical** |
-| **ALM & Environment Strategy** — environments (dev/test/prod), solution segmentation, pipelines, environment variables, connection references | Deployability and CoE isolation; repeatable releases | WP0 skeleton; WP6 full | **High** |
-| **Test Plan** — detailed cases derived from the Testing Strategy below, including safety gates | Verifiable quality and safety; required before reclamation | WP1 onward | **High** |
-| **Customer Deployment Inventory** — confirmed CoE artifact names/schemas replacing every "(validate)"; resolves blocking gaps G1 (per-user usage) and G2 (usage window) | Removes architectural assumptions; blocking per `docs/audit-components-gap-analysis.md` | WP0 | **High** |
-| **Operations Runbook & Telemetry** — monitoring, sync-health surfacing, error/partial-failure handling, retention operations | Production supportability | WP6 | **Medium** |
-| **Privacy / Data-Protection Note** — PII minimization, retention, lightweight DPIA for user and licensing data | Compliance for personal and licensing data | WP2 / WP3 | **Medium** |
+| Document | Role for an unmanaged-solution handoff | Status |
+| --- | --- | --- |
+| **Interface & API Specification** | Validated supported operations/permissions for licensing read, CoE reads, and reclamation (ADR-004) | ✅ Created |
+| **Security & Identity Design** | Least-privilege identities, consent, Dataverse roles, FLS, execution separation | ✅ Created |
+| **Recommendation Rules Specification** | Deterministic Safe/Review/Blocked logic and inactivity definition (Q-ANALYTICS-1) | ✅ Created |
+| **Customer Deployment Inventory** (template) | Replaces "(validate)" with confirmed CoE artifacts; resolves G1/G2 | ✅ Created |
+| **Administrator / Setup & Operations Guide** | The instruction manual: prerequisites, import, configuration, safe operation, troubleshooting (absorbs solution packaging & import) | ✅ Created |
+| **Validation & Safety Test Checklist** | Self-serve verification that safety guardrails work before trusting reclamation | ✅ Created |
+| **Data Handling & Privacy Note** | Transparency on personal data processed; prompts the customer's own privacy/DPIA review (they are the controller) | ✅ Created |
+| ~~ALM & Environment Strategy~~ | **Dropped** — the customer owns ALM after import; minimal packaging/import guidance folded into the Operations Guide | N/A |
 
-> Recommendation (Delivery Lead): author the three **Critical** documents as the first design deliverables inside WP0/WP1/WP2 respectively; they are gating.
+> Delivery note: for a handoff accelerator, the **Administrator / Setup & Operations Guide** is the highest-value artifact, and the **Safety Test Checklist** is essential because the solution performs destructive license reclamation.
 
 ---
 
@@ -122,16 +123,16 @@ Each work package lists **Objective · Scope · Deliverables · Dependencies · 
 - **Measurable Value:** executive value narrative; operational triage efficiency.
 - **Reuse vs. Build:** **Reuse/Extend** CoE Power BI; **Build** licensing measures + triage view. (May start after WP2; finalize after WP3.)
 
-### WP6 — Hardening, ALM, and Operations
+### WP6 — Packaging, Documentation, and Handoff
 
-- **Objective:** production readiness.
-- **Scope:** ALM pipelines (dev/test/prod); environment variables/connection references; telemetry/monitoring; sync-health surfacing; performance/throttling/retry; security review; operational runbook; author **ALM & Environment Strategy** and **Operations Runbook**.
-- **Deliverables:** pipelines; monitoring/alerts; hardened config; security review; runbook.
-- **Dependencies:** WP1–WP3 at minimum.
-- **Acceptance Criteria:** managed deployment through the pipeline; monitoring and alerts live; security review passed; runbook complete.
-- **Risks:** operational drift; CoE upgrades (mitigated by loose coupling and the adapter).
-- **Measurable Value:** reliable, supportable production operation.
-- **Reuse vs. Build:** **Build** operational scaffolding; reuse customer ALM conventions where compatible.
+- **Objective:** produce the **unmanaged solution file** and the materials a customer needs to import, trust, operate, and modify it.
+- **Scope:** export the **unmanaged solution** (publisher/prefix; connection references and environment variables parameterized for the importer); finalize the **Administrator / Setup & Operations Guide**, **Validation & Safety Test Checklist**, and **Data Handling & Privacy Note**; final safety review; confirm the solution has **no managed dependency on CoE** (loose coupling) so import never fails on CoE schema differences.
+- **Deliverables:** unmanaged solution file; the three handoff documents; final safety sign-off.
+- **Dependencies:** WP1–WP3 at minimum (WP4/WP5 if included).
+- **Acceptance Criteria:** the unmanaged solution imports cleanly into a clean environment with CoE present; connection references/environment variables are set on import; the safety checklist passes; the guides let an administrator configure and operate without further help.
+- **Risks:** import failures from an unintended CoE dependency (mitigated by canonical-ID loose coupling); customers skipping safety validation (mitigated by a prominent checklist and guardrails).
+- **Measurable Value:** a self-serve, safe, well-documented accelerator the customer can adopt and extend.
+- **Reuse vs. Build:** **Build** the packaging and documentation; the customer owns ALM and operations post-import.
 
 ---
 
@@ -143,7 +144,7 @@ WP0 Enabler ──▶ WP1 Visibility ──▶ WP2 Explainable Candidates ──
                                                      └──▶ WP5 Dashboards ◀──────┘ (start after WP2, finalize after WP3)
                                                                                    │
                                                                          WP4 Bounded Bulk (fast-follow)
-                                                     WP6 Hardening/ALM/Ops (continuous; required before production)
+                                                     WP6 Packaging & Handoff (final; produces the unmanaged solution + guides)
 ```
 
 **Gates:**
@@ -151,7 +152,7 @@ WP0 Enabler ──▶ WP1 Visibility ──▶ WP2 Explainable Candidates ──
 1. **WP0 blocking validations** (Graph consent; G1 per-user usage; G2 window) must pass before WP1.
 2. **Security sign-off** required before WP3 execution.
 3. **MVP Definition of Done** (`docs/mvp-definition.md`) is the exit of WP3.
-4. **Production go-live** requires WP6 completion.
+4. **Handoff** requires WP6 completion (unmanaged solution exported + guides + safety checklist passed).
 
 Rationale: WP1 is the smallest end-to-end slice that delivers measurable value with zero remediation risk; each subsequent package adds one safe increment (explainability → single reclamation → bulk), with dashboards and hardening running alongside.
 
@@ -167,7 +168,7 @@ Rationale: WP1 is the smallest end-to-end slice that delivers measurable value w
 | WP3 | Protected-identity/ownership evidence (reused) | Reclamation Action, Audit Log; dry-run; execution via supported API |
 | WP4 | — | Bounded-bulk capability; custom page |
 | WP5 | CoE Power BI model + usage (Reuse/Extend) | Licensing measures; triage dashboard |
-| WP6 | Customer ALM conventions (where compatible) | Pipelines, monitoring, runbook |
+| WP6 | — | Unmanaged solution export; handoff guides (admin/ops, safety checklist, privacy note) |
 
 **Summary:** inventory, ownership, usage, and dashboards are reused/extended from CoE; licensing entitlement is supplemented from Graph; the only net-new build is the licensing layer (acquisition, correlation, recommendation, reclamation, audit, protected identities). No inventory or usage collection is rebuilt (`docs/data-model.md` "Tables We Explicitly Will Not Create").
 
